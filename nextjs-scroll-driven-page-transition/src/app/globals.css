@@ -1,0 +1,143 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+* {
+  @apply m-0 p-0 box-border;
+}
+
+body {
+  background: #e3e3db;
+  color: #1a1a1a;
+  font-family: "PP Neue Montreal", sans-serif;
+}
+
+h1 {
+  font-size: 7.5vw;
+  @apply font-medium;
+}
+
+p {
+  @apply text-base font-medium;
+}
+
+a {
+  @apply no-underline uppercase font-normal text-base;
+  font-family: "Akkurat Mono", monospace;
+  color: #1a1a1a;
+}
+
+span {
+  @apply relative text-base font-medium;
+  top: -0.075em;
+  font-family: "PP Neue Montreal", sans-serif;
+}
+
+img {
+  @apply w-full h-full object-center;
+}
+
+.link {
+  @apply flex items-center;
+  gap: 0.5em;
+  padding: 0 1em;
+}
+
+.home {
+  @apply w-screen h-svh flex items-center justify-center;
+}
+
+.project-list {
+  @apply absolute top-6/12 left-6/12 list-none flex flex-col -translate-x-1/2 -translate-y-1/2;
+  gap: 0.5em;
+}
+
+.project-nav {
+  @apply fixed top-0 left-6/12 w-[50vw] flex justify-between gap-[2em] z-10 -translate-x-1/2;
+  padding: 1em;
+}
+
+.project-nav .link {
+  @apply rounded-lg;
+  background-color: #c6c6be;
+}
+
+.project-page-scroll-progress {
+  @apply relative flex-2 flex justify-center items-center rounded-lg overflow-hidden;
+  height: 30px;
+  border: 1px solid #c6c6be;
+  background-color: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(20px);
+}
+
+.project-page-scroll-progress-bar {
+  @apply absolute top-0 left-0 w-full h-full scale-x-0 will-change-transform;
+  background-color: #c6c6be;
+  transform-origin: center left;
+  z-index: -1;
+}
+
+.project-hero,
+.project-footer {
+  @apply relative w-screen h-svh flex items-center justify-center;
+}
+
+#project-description {
+  @apply absolute bottom-1/12 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center;
+}
+
+.project-footer-copy {
+  @apply absolute left-1/2 -translate-x-1/2 -translate-y-1/2;
+  top: 35%;
+}
+
+.project-images {
+  @apply flex flex-col items-center;
+  gap: 5em;
+}
+
+.project-img {
+  @apply relative w-1/2;
+  height: 75svh;
+}
+
+.next-project-progress {
+  @apply absolute bottom-1/4 w-1/2;
+  height: 4px;
+  background-color: #c6c6be;
+}
+
+.next-project-progress-bar {
+  @apply absolute top-0 left-0 w-full h-full scale-x-0 will-change-transform;
+}
+
+@media (max-width: 900px) {
+  .project-nav {
+    @apply w-screen;
+  }
+
+  .project-nav .link {
+    @apply hidden
+  }
+
+  .project-img{
+    width: 90%;
+  }
+}
