@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="styles.css" />
+  <title>Animations Exercise</title>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const character = document.querySelector(".character");
+      const street = document.querySelector(".street");
+      const background = document.querySelector(".background");
+      const foreground = document.querySelector(".foreground");
+      const shadow = document.querySelector(".shadow");
+      const carWrapper = document.querySelector(".car-wrapper");
+
+
+      const characterAnimation = character.animate([
+        {
+          backgroundPosition: "0 0",
+        },
+        {
+          backgroundPosition: `calc(var(--char-width) * -7) 0px`,
+        },
+      ], {
+        duration: 1000,
+        iterations: Infinity,
+        easing: 'steps(8, jump-none)'
+      });
+
+      characterAnimation.play()
+
+      const streetAnimation = street.animate([
+        {
+          transform: 'translateX(0)'
+        }, {
+          transform: 'translateX(-50%)'
+        }
+      ], {
+        easing: 'linear',
+        duration: 12000,
+        iterations: Infinity
+      })
+
+      const backgroundAnimation = background.animate([
+        {
+          transform: 'translateX(100%)'
+        }, {
+          transform: 'translateX(-100%)'
+        }
+      ], {
+        easing: 'linear',
+        duration: streetAnimation.effect.getComputedTiming().duration * 2,
+        iterations: Infinity
+      })
+
+
+      const foregroundAnimation = foreground.animate([
+        {
+          transform: 'translateX(200%)'
+        }, {
+          transform: 'translateX(-200%)'
+        }
+      ], {
+        easing: 'linear',
+        duration: streetAnimation.effect.getComputedTiming().duration * 1.5,
+        iterations: Infinity
+      })
+
+      function isPause() {
+        return document.getAnimations().some(ani => ani.playState === "paused")
+      }
+
+      async function jump() {
+        if (isPause() || character.getAnimations().find(ani => ani.id === 'jump')) {
+          return
+        }
+
+        characterAnimation.pause()
+        character.classList.add('jump')
+
+        const jumpAnimation = character.animate([{
+          transform: 'translateY(0)'
+        }, {
+          transform: 'translateY(-70px)'
+        }], {
+          id: 'jump',
+          duration: 500,
+          iterations: 2,
+          direction: 'alternate',
+          easing: 'ease-in-out'
+        })
+
+        shadow.animate([{
+          transform: 'scale(1)',
+          transform: "scale(1.15)"
+        }], {
+          ...jumpAnimation.effect.getComputedTiming(),
+        })
+
+        await jumpAnimation.finished
+        character.classList.remove('jump')
+        characterAnimation.play()
+      }
+
+      function togglePlayState() {
+        document.getAnimations().forEach(animation => {
+          if (animation.playState === 'running') {
+            animation.pause()
+          } else {
+            animation.play()
+            addNewCar()
+          }
+        })
+      }
+
+      function runFaster() {
+        document.getAnimations().forEach(animation => {
+          if (animation.playbackRate >= 3) { return }
+
+          animation.playbackRate *= 1.1
+        })
+      }
+
+      function runSlower() {
+        document.getAnimations().forEach(animation => {
+          if (animation.playbackRate < 0.8) { return }
+
+          animation.playbackRate *= 0.9
+        })
+      }
+
+      async function addNewCar() {
+        if (isPause() || document.querySelector('.car')) return
+
+        const car = document.createElement('div')
+        car.classList = 'car'
+        const carAnimation = car.animate([{
+          transform: 'translateX(-100%)'
+        }, {
+          transform: 'translateX(100%)'
+        }], {
+          duration: Math.random() * 4000 + 200,
+          easing: 'linear'
+        })
+
+
+        [':after', ":before"].forEach(ele => car.animate([{
+          transform: 'rotate(0)'
+        }, {
+          transform: 'rotate(360deg)'
+        }], {
+          pseudoElement: ele,
+          duration: carAnimation.effect.getComputedTiming().duration / 4,
+          easing: 'linear'
+        }))
+
+        carWrapper.appendChild(car)
+
+        await carAnimation.finished
+
+        car.remove()
+
+        setTimeout(() => {
+          if (isPause()) return
+          addNewCar()
+        }, Math.random() * 4000)
+      }
+
+      if (!isPause()) {
+        addNewCar()
+      }
+
+
+      document.addEventListener("keydown", (e) => {
+
+        switch (e.code) {
+          case "ArrowUp":
+            jump()
+            break;
+          case "ArrowRight":
+            runFaster()
+            break;
+          case "ArrowLeft":
+            runSlower()
+            break;
+          case "Space":
+            togglePlayState()
+            break;
+          default:
+            break;
+        }
+      });
+
+      setInterval(() => {
+        if (!isPause()) {
+          runSlower()
+        }
+      }, 5000)
+
+    });
+  </script>
+</head>
+
+<body>
+  <div class="view">
+    <div class="sky">
+      <img src="assets/cloud1.png" class="cloud1" alt="" />
+      <img src="assets/cloud2.png" class="cloud2" alt="" />
+    </div>
+    <div class="background">
+      <img src="assets/s1.png" alt="" />
+    </div>
+    <div class="ground">
+      <div class="street">
+        <div class="lines"></div>
+      </div>
+      <div class="shadow"></div>
+    </div>
+    <div class="character"></div>
+
+    <div class="car-wrapper">
+    </div>
+    <div class="foreground">
+      <img src="assets/s2.png" alt="" />
+    </div>
+  </div>
+</body>
+
+</html>
